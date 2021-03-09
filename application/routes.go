@@ -6,5 +6,7 @@ import (
 
 func MapRoutes() {
 	router.GET("/health-check", controllers.HealthCheck)
-	router.GET("/ping", controllers.CreateUser)
+	router.POST("/", controllers.CreateUser)
+	router.GET("/", controllers.GetAll)
+	// router.GET("/:user_id", controllers.FindUser)
 }
