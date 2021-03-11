@@ -1,31 +1,30 @@
 package controllers
 
 import (
-	"encoding/json"
-	"io/ioutil"
+	"net/http"
 	"users-api/domain"
+	"users-api/presentation/response"
+	"users-api/use_cases"
 
 	"github.com/gin-gonic/gin"
 )
 
 func CreateUser(c *gin.Context) {
 	var user domain.User
-	data, err := ioutil.ReadAll(c.Request.Body)
 
+	if err := c.ShouldBindJSON(&user); err != nil {
+		respose := response.BadRequestResponse("invalid params", err)
+		c.JSON(http.StatusBadRequest, respose)
+		return
+	}
+
+	result, err := use_cases.CreateUserUseCase(user)
 	if err != nil {
-		// todo: handle error
+		c.JSON(http.StatusBadRequest, err)
 		return
 	}
 
-	if err := json.Unmarshal(data, &user); err != nil {
-		// todo: handle error
-		return
-	}
-
-	c.JSON(200, gin.H{
-		"message": "ok",
-		"user":    user,
-	})
+	c.JSON(http.StatusCreated, result)
 }
 
 func GetAll(c *gin.Context) {
