@@ -8,5 +8,5 @@ var router = gin.Default()
 
 func BootstrapApp() {
 	MapRoutes()
-	router.Run()
+	router.Run(":8001")
 }

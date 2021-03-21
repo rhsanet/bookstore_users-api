@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"net/http"
-	"users-api/domain"
+	"users-api/domain/users"
 	"users-api/presentation/response"
 	"users-api/use_cases"
 
@@ -10,11 +10,11 @@ import (
 )
 
 func CreateUser(c *gin.Context) {
-	var user domain.User
+	var user users.User
 
 	if err := c.ShouldBindJSON(&user); err != nil {
-		respose := response.BadRequestResponse("invalid params", err)
-		c.JSON(http.StatusBadRequest, respose)
+		errMsg := response.BadRequestResponse("invalid params")
+		c.JSON(http.StatusBadRequest, errMsg)
 		return
 	}
 
@@ -35,8 +35,18 @@ func GetAll(c *gin.Context) {
 }
 
 func FindUser(c *gin.Context) {
-	c.JSON(200, gin.H{
-		"message": "pong",
-		"status":  true,
-	})
+	userId := c.Param("user_id")
+	if userId == "" {
+		err := response.BadRequestResponse("Invalid user id")
+		c.JSON(err.StatusCode, err)
+		return
+	}
+
+	user, err := use_cases.FindUserById(userId)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err)
+		return
+	}
+
+	c.JSON(200, user)
 }

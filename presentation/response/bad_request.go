@@ -2,16 +2,16 @@ package response
 
 import "net/http"
 
-type ErrorMessage struct {
+type RestErr struct {
 	Message    string `json:"message"`
 	Error      string `json:"error"`
 	StatusCode int    `json:"statusCode"`
 }
 
-func BadRequestResponse(message string, err error) *ErrorMessage {
-	return &ErrorMessage{
+func BadRequestResponse(message string) *RestErr {
+	return &RestErr{
 		Message:    message,
-		Error:      err.Error(),
+		Error:      "bad_request",
 		StatusCode: http.StatusBadRequest,
 	}
 }
